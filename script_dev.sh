@@ -25,11 +25,12 @@ resposta=$(zenity  --list  --text "Escolha os pacotes que deseja instalar." --ch
     FALSE "l" "Google Chrome"\
     FALSE "m" "Git e Gitk"\
     FALSE "n" "Filezilla"\
-    FALSE "o" "NodeJS"\
+    FALSE "o" "NodeJS com NVM"\
     FALSE "p" "Yo / GruntJs / Bower (Requer NodeJS)"\
     FALSE "q" "Pip, Virtualenv e Virtualenvwrapper"\
     FALSE "r" "RVM e Ruby"\
     FALSE "s" "Spotify"\
+    FALSE "t" "VSCode"\
     --separator=":" --width=750 --height=700)
 
 
@@ -53,7 +54,7 @@ fi
 if [[ $resposta =~ "e" ]]; then
     sudo add-apt-repository -y ppa:gnome-terminator
     sudo apt-get update
-    sudo apt-get install terminator
+    sudo apt-get install -y terminator
 fi
 
 if [[ $resposta =~ "f" ]]; then
@@ -112,15 +113,10 @@ if [[ $resposta =~ "n" ]]; then
 fi
 
 if [[ $resposta =~ "o" ]]; then
-  # instalando dependências
-  sudo apt-get install -y python-software-properties python g++ make
-  # adicionando repositório
-  sudo add-apt-repository -y ppa:chris-lea/node.js
-  sudo apt-get update
-  sudo apt-get install -y nodejs
-  # correção para não precisar rodar em sudo
-  echo prefix = ~/.node >> ~/.npmrc
-  echo 'export PATH=$HOME/.node/bin:$PATH' >> ~/.bashrc
+  sudo apt-get install -y curl
+  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.3/install.sh | bash
+  . ~/.nvm/nvm.sh
+  nvm install latest
 fi
 
 if [[ $resposta =~ "r" ]]; then
@@ -144,6 +140,14 @@ if [[ $resposta =~ "s" ]]; then
   echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
   sudo apt-get update
   sudo apt-get install -y spotify-client
+fi
+
+if [[ $resposta =~ "t" ]]; then
+  curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+  sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+  sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+  sudo apt-get update
+  sudo apt-get install -y code
 fi
 
 # removendo os pacotes não necessários
